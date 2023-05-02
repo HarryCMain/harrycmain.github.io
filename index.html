@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Select GPS Location</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      #map {
+        height: 100%;
+      }
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAou0QMegDcU_n7v-8FDZugEOLimUlQYKI"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+      function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 56.4907, lng: -4.2026},
+          zoom: 7
+        });
+
+        map.addListener('click', function(event) {
+          // Get the GPS coordinates of the clicked location
+          var latitude = event.latLng.lat();
+          var longitude = event.latLng.lng();
+
+            // Send an AJAX request to the Cloud Function to get the postcode for the location
+           /*
+            $.ajax({
+            type: "POST",
+            url: "https://europe-west1-metromapper.cloudfunctions.net/Get-Postcode",
+            data: JSON.stringify({
+              latitude: latitude,
+              longitude: longitude
+            }),
+            dataType: "json",
+            success: function(data) {
+              // Display the postcode to the user
+              var postcodeDiv = document.getElementById('postcode');
+              postcodeDiv.innerHTML = 'Postcode: ' + data.postcode;
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+              alert('Error: ' + errorThrown);
+            }
+            });
+            */
+          // Display the coordinates to the user
+          var coordinatesDiv = document.getElementById('coordinates');
+          coordinatesDiv.innerHTML = 'Latitude: ' + latitude + '<br>Longitude: ' + longitude;
+           // Add the coordinates to the form
+           $('#latitude').val(latitude);
+          $('#longitude').val(longitude);
+        });
+        
+      }
+    </script>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="coordinates"></div>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAou0QMegDcU_n7v-8FDZugEOLimUlQYKI&callback=initMap"></script>
+    <form id="location-form" action={{ url_for("gfg")}}" method="post">
+        <input type="hidden" name="latitude" id="latitude">
+        <input type="hidden" name="longitude" id="longitude">
+        <input type="submit" value="Calculate!">       
+      </form>
+    </body>
+</html>
